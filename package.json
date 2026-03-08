@@ -1,7 +1,8 @@
 {
+  "icon": "images/logo.png",
   "name": "ason-vscode",
-  "displayName": "ASON Language Support",
-  "description": "Language support for ASON (Another Structured Object Notation) format — syntax highlighting, formatting, compression, error diagnostics, and field hints",
+  "displayName": "ASON Support",
+  "description": "Language support for ASON (Array-Schema Object Notation) format — syntax highlighting, formatting, compression, error diagnostics, and field hints",
   "version": "0.1.0",
   "publisher": "ason",
   "repository": {
