@@ -6,9 +6,11 @@ import {
   commands,
   window,
   TextEditor,
-  TextEdit,
   Range,
   Position,
+  DecorationOptions,
+  ThemeColor,
+  TextEditorDecorationType,
 } from "vscode";
 
 import {
@@ -22,6 +24,9 @@ import {
 
 let client: LanguageClient;
 let commandsRegistered = false;
+let activeLineInfoDecoration: TextEditorDecorationType | undefined;
+let activeLineInfoTimer: NodeJS.Timeout | undefined;
+let activeLineInfoSeq = 0;
 
 export async function activate(context: ExtensionContext) {
   // Guard command registration — only once per extension host lifetime.
@@ -90,6 +95,28 @@ export async function activate(context: ExtensionContext) {
 
   try {
     await client.start();
+    activeLineInfoDecoration = window.createTextEditorDecorationType({
+      after: {
+        margin: "0 0 0 1.5rem",
+        color: new ThemeColor("editorCodeLens.foreground"),
+      },
+      rangeBehavior: 1,
+    });
+    context.subscriptions.push(activeLineInfoDecoration);
+    context.subscriptions.push(
+      window.onDidChangeTextEditorSelection((e) => scheduleActiveLineInfoUpdate(e.textEditor)),
+    );
+    context.subscriptions.push(
+      window.onDidChangeActiveTextEditor((editor) => scheduleActiveLineInfoUpdate(editor)),
+    );
+    context.subscriptions.push(
+      workspace.onDidChangeTextDocument((e) => {
+        const editor = window.activeTextEditor;
+        if (!editor || editor.document.uri.toString() !== e.document.uri.toString()) return;
+        scheduleActiveLineInfoUpdate(editor);
+      }),
+    );
+    scheduleActiveLineInfoUpdate(window.activeTextEditor);
     context.subscriptions.push(client);
   } catch (err: any) {
     window.showErrorMessage(
@@ -99,6 +126,10 @@ export async function activate(context: ExtensionContext) {
 }
 
 export function deactivate(): Thenable<void> | undefined {
+  if (activeLineInfoTimer) {
+    clearTimeout(activeLineInfoTimer);
+    activeLineInfoTimer = undefined;
+  }
   if (!client) {
     return undefined;
   }
@@ -294,4 +325,74 @@ async function jsonToASON() {
   } catch (err: any) {
     window.showErrorMessage(`Convert to ASON failed: ${err.message || err}`);
   }
+}
+
+function scheduleActiveLineInfoUpdate(editor: TextEditor | undefined) {
+  if (activeLineInfoTimer) {
+    clearTimeout(activeLineInfoTimer);
+  }
+  activeLineInfoTimer = setTimeout(() => {
+    void updateActiveLineInfo(editor);
+  }, 80);
+}
+
+async function updateActiveLineInfo(editor: TextEditor | undefined) {
+  if (!activeLineInfoDecoration) return;
+
+  if (!editor || editor.document.languageId !== "ason") {
+    clearActiveLineInfo(undefined);
+    return;
+  }
+
+  if (!client || client.state !== State.Running) {
+    clearActiveLineInfo(undefined);
+    return;
+  }
+
+  const seq = ++activeLineInfoSeq;
+  const active = editor.selection.active;
+
+  try {
+    const info = await client.sendRequest("ason/cursorInfo", {
+      textDocument: { uri: editor.document.uri.toString() },
+      position: { line: active.line, character: active.character },
+    }) as { path?: string; type?: string } | null;
+
+    if (seq !== activeLineInfoSeq) return;
+    if (window.activeTextEditor !== editor) return;
+
+    if (!info?.path || !info?.type) {
+      clearActiveLineInfo(editor);
+      return;
+    }
+
+    const line = editor.document.lineAt(active.line);
+    const range = new Range(
+      new Position(active.line, line.range.end.character),
+      new Position(active.line, line.range.end.character),
+    );
+    const decoration: DecorationOptions = {
+      range,
+      renderOptions: {
+        after: {
+          contentText: `// ${info.type} | ${info.path}`,
+        },
+      },
+    };
+    editor.setDecorations(activeLineInfoDecoration, [decoration]);
+  } catch {
+    if (seq !== activeLineInfoSeq) return;
+    clearActiveLineInfo(editor);
+  }
+}
+
+function clearActiveLineInfo(editor: TextEditor | undefined) {
+  if (!activeLineInfoDecoration) return;
+  if (editor) {
+    editor.setDecorations(activeLineInfoDecoration, []);
+    return;
+  }
+  window.visibleTextEditors.forEach((visibleEditor) => {
+    visibleEditor.setDecorations(activeLineInfoDecoration!, []);
+  });
 }
