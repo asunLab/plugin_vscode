@@ -98,7 +98,7 @@
           } else if (
             prev >= 0 &&
             src[prev] === "@" &&
-            /^(int|integer|float|double|str|string|bool|boolean)$/.test(word)
+            /^(int|float|str|bool)$/.test(word)
           ) {
             result += sp("typ", word);
           } else {

@@ -51,7 +51,7 @@
     },
     "type-hint": {
       "name": "support.type.ason",
-      "match": "\\b(int|integer|float|double|str|string|bool|boolean)\\b"
+      "match": "\\b(int|float|str|bool)\\b"
     },
     "data": {
       "patterns": [
