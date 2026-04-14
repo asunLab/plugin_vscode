@@ -35,10 +35,10 @@ export async function activate(context: ExtensionContext) {
   if (!commandsRegistered) {
     commandsRegistered = true;
     const cmds: [string, () => any][] = [
-      ["ason.format", () => formatDocument()],
-      ["ason.compress", () => compressDocument()],
-      ["ason.toJSON", () => asonToJSON()],
-      ["ason.fromJSON", () => jsonToASON()],
+      ["asun.format", () => formatDocument()],
+      ["asun.compress", () => compressDocument()],
+      ["asun.toJSON", () => asunToJSON()],
+      ["asun.fromJSON", () => jsonToASUN()],
     ];
     for (const [id, handler] of cmds) {
       try {
@@ -52,7 +52,7 @@ export async function activate(context: ExtensionContext) {
   const serverPath = resolveServerPath(context);
   if (!serverPath) {
     window.showErrorMessage(
-      "ASON LSP binary not found. Please set ason.lspPath in settings or ensure lsp-ason (or ason-lsp) is in PATH.",
+      "ASUN LSP binary not found. Please set asun.lspPath in settings or ensure lsp-asun (or asun-lsp) is in PATH.",
     );
     return;
   }
@@ -72,11 +72,11 @@ export async function activate(context: ExtensionContext) {
 
   const clientOptions: LanguageClientOptions = {
     documentSelector: [
-      { scheme: "file",     language: "ason" },
-      { scheme: "untitled", language: "ason" },
+      { scheme: "file",     language: "asun" },
+      { scheme: "untitled", language: "asun" },
     ],
     synchronize: {
-      fileEvents: workspace.createFileSystemWatcher("**/*.ason"),
+      fileEvents: workspace.createFileSystemWatcher("**/*.asun"),
     },
   };
 
@@ -87,8 +87,8 @@ export async function activate(context: ExtensionContext) {
   }
 
   client = new LanguageClient(
-    "ason-lsp",
-    "ASON Language Server",
+    "asun-lsp",
+    "ASUN Language Server",
     serverOptions,
     clientOptions,
   );
@@ -120,7 +120,7 @@ export async function activate(context: ExtensionContext) {
     context.subscriptions.push(client);
   } catch (err: any) {
     window.showErrorMessage(
-      `ASON Language Server failed to start: ${err?.message ?? err}\nBinary: ${serverPath}`,
+      `ASUN Language Server failed to start: ${err?.message ?? err}\nBinary: ${serverPath}`,
     );
   }
 }
@@ -137,33 +137,33 @@ export function deactivate(): Thenable<void> | undefined {
 }
 
 /**
- * Resolve the ason-lsp binary path.
+ * Resolve the asun-lsp binary path.
  * Priority: settings > bundled (server/ inside extension) > PATH
  */
 function resolveServerPath(context: ExtensionContext): string | undefined {
   // 1. Check user setting
-  const config = workspace.getConfiguration("ason");
+  const config = workspace.getConfiguration("asun");
   const configPath = config.get<string>("lspPath");
   if (configPath && configPath.trim() !== "") {
     if (fs.existsSync(configPath)) {
       return configPath;
     }
     window.showWarningMessage(
-      `ason.lspPath "${configPath}" not found, trying defaults.`,
+      `asun.lspPath "${configPath}" not found, trying defaults.`,
     );
   }
 
   // 2. Check bundled binary inside extension (like rust-analyzer)
-  //    Prefer lsp-ason (Zig implementation), fall back to ason-lsp (Go).
+  //    Prefer lsp-asun (Zig implementation), fall back to asun-lsp (Go).
   const isWindows = process.platform === "win32";
   const ext = isWindows ? ".exe" : "";
   const bundledPaths = [
     // Zig LSP — primary (bundled server/ or dev sibling directory)
-    path.resolve(context.extensionPath, "server", `lsp-ason${ext}`),
-    path.resolve(context.extensionPath, "..", "lsp-ason", "zig-out", "bin", `lsp-ason${ext}`),
+    path.resolve(context.extensionPath, "server", `lsp-asun${ext}`),
+    path.resolve(context.extensionPath, "..", "lsp-asun", "zig-out", "bin", `lsp-asun${ext}`),
     // Go LSP — fallback
-    path.resolve(context.extensionPath, "server", `ason-lsp${ext}`),
-    path.resolve(context.extensionPath, "..", "ason-lsp", `ason-lsp${ext}`),
+    path.resolve(context.extensionPath, "server", `asun-lsp${ext}`),
+    path.resolve(context.extensionPath, "..", "asun-lsp", `asun-lsp${ext}`),
   ];
   for (const bp of bundledPaths) {
     if (fs.existsSync(bp)) {
@@ -179,9 +179,9 @@ function resolveServerPath(context: ExtensionContext): string | undefined {
     }
   }
 
-  // 3. Check PATH — prefer lsp-ason, fall back to ason-lsp
+  // 3. Check PATH — prefer lsp-asun, fall back to asun-lsp
   const { execSync } = require("child_process");
-  for (const binaryName of ["lsp-ason", "ason-lsp"]) {
+  for (const binaryName of ["lsp-asun", "asun-lsp"]) {
     try {
       const cmd = isWindows ? `where ${binaryName}` : `which ${binaryName}`;
       const which = execSync(cmd, { encoding: "utf8" }).trim();
@@ -197,29 +197,29 @@ function resolveServerPath(context: ExtensionContext): string | undefined {
 }
 
 /**
- * Format (beautify) the active ASON document.
+ * Format (beautify) the active ASUN document.
  */
 async function formatDocument() {
   const editor = window.activeTextEditor;
-  if (!editor || editor.document.languageId !== "ason") {
-    window.showInformationMessage("Open an ASON file first.");
+  if (!editor || editor.document.languageId !== "asun") {
+    window.showInformationMessage("Open an ASUN file first.");
     return;
   }
   await commands.executeCommand("editor.action.formatDocument");
 }
 
 /**
- * Compress (minify) the active ASON document via LSP command.
+ * Compress (minify) the active ASUN document via LSP command.
  */
 async function compressDocument() {
   const editor = window.activeTextEditor;
-  if (!editor || editor.document.languageId !== "ason") {
-    window.showInformationMessage("Open an ASON file first.");
+  if (!editor || editor.document.languageId !== "asun") {
+    window.showInformationMessage("Open an ASUN file first.");
     return;
   }
 
   if (!client || client.state !== State.Running) {
-    window.showErrorMessage("ASON language server not running.");
+    window.showErrorMessage("ASUN language server not running.");
     return;
   }
 
@@ -227,7 +227,7 @@ async function compressDocument() {
     const compressed: string = await client.sendRequest(
       ExecuteCommandRequest.type,
       {
-        command: "ason.compress",
+        command: "asun.compress",
         arguments: [editor.document.uri.toString()],
       },
     );
@@ -246,17 +246,17 @@ async function compressDocument() {
 }
 
 /**
- * Convert the active ASON document to JSON and open in a new editor.
+ * Convert the active ASUN document to JSON and open in a new editor.
  */
-async function asonToJSON() {
+async function asunToJSON() {
   const editor = window.activeTextEditor;
-  if (!editor || editor.document.languageId !== "ason") {
-    window.showInformationMessage("Open an ASON file first.");
+  if (!editor || editor.document.languageId !== "asun") {
+    window.showInformationMessage("Open an ASUN file first.");
     return;
   }
 
   if (!client || client.state !== State.Running) {
-    window.showErrorMessage("ASON language server not running.");
+    window.showErrorMessage("ASUN language server not running.");
     return;
   }
 
@@ -264,7 +264,7 @@ async function asonToJSON() {
     const result: string = await client.sendRequest(
       ExecuteCommandRequest.type,
       {
-        command: "ason.toJSON",
+        command: "asun.toJSON",
         arguments: [editor.document.uri.toString()],
       },
     );
@@ -281,9 +281,9 @@ async function asonToJSON() {
 }
 
 /**
- * Convert JSON content to ASON. Works on active JSON file or prompts for input.
+ * Convert JSON content to ASUN. Works on active JSON file or prompts for input.
  */
-async function jsonToASON() {
+async function jsonToASUN() {
   const editor = window.activeTextEditor;
   let jsonText = "";
 
@@ -291,7 +291,7 @@ async function jsonToASON() {
     jsonText = editor.document.getText();
   } else {
     const input = await window.showInputBox({
-      prompt: "Paste JSON content to convert to ASON",
+      prompt: "Paste JSON content to convert to ASUN",
       placeHolder: '{"key": "value"}',
     });
     if (!input) {
@@ -301,7 +301,7 @@ async function jsonToASON() {
   }
 
   if (!client || client.state !== State.Running) {
-    window.showErrorMessage("ASON language server not running.");
+    window.showErrorMessage("ASUN language server not running.");
     return;
   }
 
@@ -309,21 +309,21 @@ async function jsonToASON() {
     const result: string = await client.sendRequest(
       ExecuteCommandRequest.type,
       {
-        command: "ason.fromJSON",
+        command: "asun.fromJSON",
         arguments: [jsonText],
       },
     );
     if (result) {
       const doc = await workspace.openTextDocument({
         content: result,
-        language: "ason",
+        language: "asun",
       });
       await window.showTextDocument(doc, { preview: false });
       // Format (beautify) immediately so the output is readable
       await commands.executeCommand("editor.action.formatDocument");
     }
   } catch (err: any) {
-    window.showErrorMessage(`Convert to ASON failed: ${err.message || err}`);
+    window.showErrorMessage(`Convert to ASUN failed: ${err.message || err}`);
   }
 }
 
@@ -339,7 +339,7 @@ function scheduleActiveLineInfoUpdate(editor: TextEditor | undefined) {
 async function updateActiveLineInfo(editor: TextEditor | undefined) {
   if (!activeLineInfoDecoration) return;
 
-  if (!editor || editor.document.languageId !== "ason") {
+  if (!editor || editor.document.languageId !== "asun") {
     clearActiveLineInfo(undefined);
     return;
   }
@@ -353,7 +353,7 @@ async function updateActiveLineInfo(editor: TextEditor | undefined) {
   const active = editor.selection.active;
 
   try {
-    const info = await client.sendRequest("ason/cursorInfo", {
+    const info = await client.sendRequest("asun/cursorInfo", {
       textDocument: { uri: editor.document.uri.toString() },
       position: { line: active.line, character: active.character },
     }) as { path?: string; type?: string } | null;

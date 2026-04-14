@@ -1,26 +1,26 @@
-// ASON syntax highlighting for VS Code Markdown Preview
+// ASUN syntax highlighting for VS Code Markdown Preview
 (function () {
   "use strict";
 
-  function highlightAsonBlocks() {
+  function highlightAsunBlocks() {
     // VS Code markdown preview may use various class patterns:
-    // - code.language-ason  (standard markdown-it)
-    // - code with parent pre having data-lang="ason" (shiki-based)
+    // - code.language-asun  (standard markdown-it)
+    // - code with parent pre having data-lang="asun" (shiki-based)
     var selectors = [
-      'code.language-ason',
-      'code[class*="language-ason"]',
-      'pre[data-lang="ason"] > code',
-      'pre[data-language="ason"] > code'
+      'code.language-asun',
+      'code[class*="language-asun"]',
+      'pre[data-lang="asun"] > code',
+      'pre[data-language="asun"] > code'
     ];
     var blocks = document.querySelectorAll(selectors.join(', '));
 
-    // Also scan all <code> elements inside <pre> for unrecognized ason blocks
+    // Also scan all <code> elements inside <pre> for unrecognized asun blocks
     if (blocks.length === 0) {
       document.querySelectorAll('pre > code').forEach(function (code) {
         var pre = code.parentElement;
-        // Check if the info string or class hints at ason
+        // Check if the info string or class hints at asun
         var cls = (code.className || '') + ' ' + (pre.className || '');
-        if (/\bason\b/i.test(cls)) {
+        if (/\basun\b/i.test(cls)) {
           // Already matched above
         }
       });
@@ -28,8 +28,8 @@
 
     blocks.forEach(function (block) {
       // Skip if already highlighted by us
-      if (block.dataset.asonHighlighted) return;
-      block.dataset.asonHighlighted = "true";
+      if (block.dataset.asunHighlighted) return;
+      block.dataset.asunHighlighted = "true";
 
       // Get plain text (strip any existing shiki spans)
       var text = block.textContent || "";
@@ -128,7 +128,7 @@
   }
 
   function sp(cls, content) {
-    return '<span class="ason-' + cls + '">' + content + "</span>";
+    return '<span class="asun-' + cls + '">' + content + "</span>";
   }
 
   function esc(s) {
@@ -139,44 +139,44 @@
   var style = document.createElement("style");
   style.textContent = [
     /* ── Dark theme (default) ── */
-    ".ason-cmt  { color: #6a9955; font-style: italic; }",
-    ".ason-str  { color: #ce9178; }",
-    ".ason-typ  { color: #4ec9b0; }",
-    ".ason-num  { color: #b5cea8; }",
-    ".ason-bool { color: #569cd6; }",
-    ".ason-at   { color: #d4d4d4; }",
-    ".ason-bkt  { color: #ffd700; }",
-    ".ason-op   { color: #d4d4d4; }",
-    ".ason-var  { color: #9cdcfe; }",
+    ".asun-cmt  { color: #6a9955; font-style: italic; }",
+    ".asun-str  { color: #ce9178; }",
+    ".asun-typ  { color: #4ec9b0; }",
+    ".asun-num  { color: #b5cea8; }",
+    ".asun-bool { color: #569cd6; }",
+    ".asun-at   { color: #d4d4d4; }",
+    ".asun-bkt  { color: #ffd700; }",
+    ".asun-op   { color: #d4d4d4; }",
+    ".asun-var  { color: #9cdcfe; }",
     /* ── Light theme ── */
-    "body.vscode-light .ason-cmt  { color: #008000; }",
-    "body.vscode-light .ason-str  { color: #a31515; }",
-    "body.vscode-light .ason-typ  { color: #267f99; }",
-    "body.vscode-light .ason-num  { color: #098658; }",
-    "body.vscode-light .ason-bool { color: #0000ff; }",
-    "body.vscode-light .ason-at   { color: #000000; }",
-    "body.vscode-light .ason-bkt  { color: #0431fa; }",
-    "body.vscode-light .ason-op   { color: #000000; }",
-    "body.vscode-light .ason-var  { color: #001080; }",
+    "body.vscode-light .asun-cmt  { color: #008000; }",
+    "body.vscode-light .asun-str  { color: #a31515; }",
+    "body.vscode-light .asun-typ  { color: #267f99; }",
+    "body.vscode-light .asun-num  { color: #098658; }",
+    "body.vscode-light .asun-bool { color: #0000ff; }",
+    "body.vscode-light .asun-at   { color: #000000; }",
+    "body.vscode-light .asun-bkt  { color: #0431fa; }",
+    "body.vscode-light .asun-op   { color: #000000; }",
+    "body.vscode-light .asun-var  { color: #001080; }",
     /* ── High-contrast theme ── */
-    "body.vscode-high-contrast .ason-cmt  { color: #7ca668; }",
-    "body.vscode-high-contrast .ason-str  { color: #ce9178; }",
-    "body.vscode-high-contrast .ason-typ  { color: #4ec9b0; }",
-    "body.vscode-high-contrast .ason-num  { color: #b5cea8; }",
-    "body.vscode-high-contrast .ason-bool { color: #569cd6; }",
-    "body.vscode-high-contrast .ason-at   { color: #d4d4d4; }",
-    "body.vscode-high-contrast .ason-bkt  { color: #ffd700; }",
-    "body.vscode-high-contrast .ason-op   { color: #d4d4d4; }",
-    "body.vscode-high-contrast .ason-var  { color: #9cdcfe; }",
+    "body.vscode-high-contrast .asun-cmt  { color: #7ca668; }",
+    "body.vscode-high-contrast .asun-str  { color: #ce9178; }",
+    "body.vscode-high-contrast .asun-typ  { color: #4ec9b0; }",
+    "body.vscode-high-contrast .asun-num  { color: #b5cea8; }",
+    "body.vscode-high-contrast .asun-bool { color: #569cd6; }",
+    "body.vscode-high-contrast .asun-at   { color: #d4d4d4; }",
+    "body.vscode-high-contrast .asun-bkt  { color: #ffd700; }",
+    "body.vscode-high-contrast .asun-op   { color: #d4d4d4; }",
+    "body.vscode-high-contrast .asun-var  { color: #9cdcfe; }",
   ].join("\n");
   document.head.appendChild(style);
 
   // Run on load
-  highlightAsonBlocks();
+  highlightAsunBlocks();
 
   // Watch for dynamic preview updates (markdown preview re-renders on edit)
   var observer = new MutationObserver(function () {
-    highlightAsonBlocks();
+    highlightAsunBlocks();
   });
   observer.observe(document.body, { childList: true, subtree: true });
 })();

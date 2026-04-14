@@ -1,7 +1,6 @@
-# ASON Language Support for VS Code
+# ASUN Language Support for VS Code
 
-This guide explains how to build, install, and use the ASON VS Code extension.
-
+This guide explains how to build, install, and use the ASUN VS Code extension.
 
 ---
 
@@ -21,12 +20,12 @@ This guide explains how to build, install, and use the ASON VS Code extension.
 
 Before you begin, make sure the following tools are installed:
 
-| Tool | Minimum Version | Purpose | Download |
-| --- | --- | --- | --- |
-| **VS Code** | 1.75+ | Editor | [Download](https://code.visualstudio.com/) |
-| **Node.js** | 18+ | Build the extension | [Download](https://nodejs.org/) |
-| **Zig** | 0.15+ | Build the language server | [Download](https://ziglang.org/download/) |
-| **Git** | recent | Clone `lsp-ason` automatically if missing | [Download](https://git-scm.com/) |
+| Tool        | Minimum Version | Purpose                                   | Download                                   |
+| ----------- | --------------- | ----------------------------------------- | ------------------------------------------ |
+| **VS Code** | 1.75+           | Editor                                    | [Download](https://code.visualstudio.com/) |
+| **Node.js** | 18+             | Build the extension                       | [Download](https://nodejs.org/)            |
+| **Zig**     | 0.15+           | Build the language server                 | [Download](https://ziglang.org/download/)  |
+| **Git**     | recent          | Clone `lsp-asun` automatically if missing | [Download](https://git-scm.com/)           |
 
 Verify the installation from a terminal:
 
@@ -48,7 +47,7 @@ The build script does the following:
 
 1. Installs npm dependencies for the extension
 2. Compiles the TypeScript extension code
-3. Builds the `lsp-ason` language server with Zig
+3. Builds the `lsp-asun` language server with Zig
 4. Bundles the binary into `server/`
 5. Packages a platform-specific `.vsix`
 
@@ -69,7 +68,7 @@ npm install
 This produces a `.vsix` file in the current directory, for example:
 
 ```text
-ason-vscode-darwin-arm64-0.1.0.vsix
+asun-vscode-darwin-arm64-0.1.0.vsix
 ```
 
 ### 2.3 Build for all supported platforms
@@ -80,14 +79,14 @@ ason-vscode-darwin-arm64-0.1.0.vsix
 
 This generates six VSIX packages:
 
-| File | Platform |
-| --- | --- |
-| `ason-vscode-darwin-arm64-0.1.0.vsix` | macOS Apple Silicon |
-| `ason-vscode-darwin-x64-0.1.0.vsix` | macOS Intel |
-| `ason-vscode-linux-x64-0.1.0.vsix` | Linux x86_64 |
-| `ason-vscode-linux-arm64-0.1.0.vsix` | Linux ARM64 |
-| `ason-vscode-win32-x64-0.1.0.vsix` | Windows x86_64 |
-| `ason-vscode-win32-arm64-0.1.0.vsix` | Windows ARM64 |
+| File                                  | Platform            |
+| ------------------------------------- | ------------------- |
+| `asun-vscode-darwin-arm64-0.1.0.vsix` | macOS Apple Silicon |
+| `asun-vscode-darwin-x64-0.1.0.vsix`   | macOS Intel         |
+| `asun-vscode-linux-x64-0.1.0.vsix`    | Linux x86_64        |
+| `asun-vscode-linux-arm64-0.1.0.vsix`  | Linux ARM64         |
+| `asun-vscode-win32-x64-0.1.0.vsix`    | Windows x86_64      |
+| `asun-vscode-win32-arm64-0.1.0.vsix`  | Windows ARM64       |
 
 ### 2.4 Build a specific platform
 
@@ -104,11 +103,11 @@ This generates six VSIX packages:
 
 The extension build is cross-platform because:
 
-1. Zig can cross-compile `lsp-ason` for all supported targets
+1. Zig can cross-compile `lsp-asun` for all supported targets
 2. `vsce package --target ...` produces target-specific VSIX packages
 3. The packaged extension loads the bundled language server from `server/`
 
-If `../lsp-ason` does not exist, `./scripts/build.sh` clones it automatically from GitHub before building.
+If `../lsp-asun` does not exist, `./scripts/build.sh` clones it automatically from GitHub before building.
 
 ---
 
@@ -117,7 +116,7 @@ If `../lsp-ason` does not exist, `./scripts/build.sh` clones it automatically fr
 ### Option 1: Install from a VSIX file
 
 ```bash
-code --install-extension ason-vscode-darwin-arm64-0.1.0.vsix
+code --install-extension asun-vscode-darwin-arm64-0.1.0.vsix
 ```
 
 Or in VS Code:
@@ -134,7 +133,7 @@ If you do not want to package the extension yet, you can run it directly in deve
 Build the language server first:
 
 ```bash
-cd ../lsp-ason
+cd ../lsp-asun
 zig build
 ```
 
@@ -148,22 +147,22 @@ Press `F5` to launch a new Extension Development Host window.
 
 In development mode the extension looks for the server in:
 
-- `server/lsp-ason`
-- `../lsp-ason/zig-out/bin/lsp-ason`
-- `server/ason-lsp`
-- `../ason-lsp/ason-lsp`
+- `server/lsp-asun`
+- `../lsp-asun/zig-out/bin/lsp-asun`
+- `server/asun-lsp`
+- `../asun-lsp/asun-lsp`
 - `PATH`
 
-The legacy `ason-lsp` fallback is kept for compatibility, but `lsp-ason` is the primary server.
+The legacy `asun-lsp` fallback is kept for compatibility, but `lsp-asun` is the primary server.
 
 ---
 
 ## 4. Verify the Installation
 
-1. Create a file named `test.ason`
+1. Create a file named `test.asun`
 2. Paste the following content:
 
-```ason
+```asun
 {name@str, age@int, active@bool}:
   (Alice, 30, true)
 ```
@@ -182,7 +181,7 @@ If syntax highlighting works but diagnostics or formatting do not, see the [FAQ]
 
 ### 5.1 Syntax Highlighting
 
-Syntax highlighting works automatically for `.ason` files.
+Syntax highlighting works automatically for `.asun` files.
 
 Highlighted elements include:
 
@@ -192,12 +191,12 @@ Highlighted elements include:
 - `{}` `()` `[]`
 - comments like `/* ... */`
 
-### 5.2 ASON Code Blocks in Markdown
+### 5.2 ASUN Code Blocks in Markdown
 
-Fenced ASON code blocks are highlighted in Markdown:
+Fenced ASUN code blocks are highlighted in Markdown:
 
 ````markdown
-```ason
+```asun
 {name@str, score@int}:(Alice, 100)
 ```
 ````
@@ -208,7 +207,7 @@ The extension shows real-time diagnostics while you edit.
 
 For example, this input is invalid:
 
-```ason
+```asun
 {name@str}:(Alice
 ```
 
@@ -216,53 +215,53 @@ VS Code should underline the error and show it in the Problems panel.
 
 ### 5.4 Format
 
-Format the current ASON document into a readable layout.
+Format the current ASUN document into a readable layout.
 
 Ways to run it:
 
 - `Shift+Option+F` on macOS or `Shift+Alt+F` on Windows/Linux
-- Command Palette: `ASON: Format (Beautify)`
+- Command Palette: `ASUN: Format (Beautify)`
 - Editor context menu: `Format Document`
 
 Before:
 
-```ason
+```asun
 {name@str,age@int,addr@{city@str,zip@int}}:(Alice,30,(NYC,10001))
 ```
 
 After:
 
-```ason
+```asun
 {name@str, age@int, addr@{city@str, zip@int}}:
   (Alice, 30, (NYC, 10001))
 ```
 
 ### 5.5 Compress
 
-Compress the current ASON document into a compact one-line form.
+Compress the current ASUN document into a compact one-line form.
 
-Use the Command Palette and run `ASON: Compress (Minify)`.
+Use the Command Palette and run `ASUN: Compress (Minify)`.
 
 Before:
 
-```ason
+```asun
 {name@str, age@int}:
   (Alice, 30)
 ```
 
 After:
 
-```ason
+```asun
 {name@str,age@int}:(Alice,30)
 ```
 
-### 5.6 Convert ASON to JSON
+### 5.6 Convert ASUN to JSON
 
-Open an `.ason` file, run `ASON: Convert to JSON`, and the extension opens the converted JSON in a new editor tab.
+Open an `.asun` file, run `ASUN: Convert to JSON`, and the extension opens the converted JSON in a new editor tab.
 
-ASON input:
+ASUN input:
 
-```ason
+```asun
 {name@str, age@int, active@bool}:
   (Alice, 30, true)
 ```
@@ -277,19 +276,19 @@ JSON output:
 }
 ```
 
-### 5.7 Convert JSON to ASON
+### 5.7 Convert JSON to ASUN
 
 There are two ways to do this.
 
 From a JSON file:
 
 1. Open a `.json` file
-2. Run `ASON: Convert JSON to ASON`
-3. The converted ASON opens in a new tab
+2. Run `ASUN: Convert JSON to ASUN`
+3. The converted ASUN opens in a new tab
 
 From pasted input:
 
-1. Run `ASON: Convert JSON to ASON`
+1. Run `ASUN: Convert JSON to ASUN`
 2. Paste JSON content into the input box
 3. Press Enter
 
@@ -302,9 +301,9 @@ JSON input:
 ]
 ```
 
-ASON output:
+ASUN output:
 
-```ason
+```asun
 [{name@str,score@int}]:
   (Alice,95),
   (Bob,87)
@@ -312,7 +311,7 @@ ASON output:
 
 ### 5.8 Completion
 
-Press `Ctrl+Space` to trigger completion suggestions while editing ASON.
+Press `Ctrl+Space` to trigger completion suggestions while editing ASUN.
 
 Typical suggestions include:
 
@@ -330,7 +329,7 @@ The extension can show field-name hints before tuple values.
 
 Example source:
 
-```ason
+```asun
 {name@str, age@int, city@str}:(Alice, 30, NYC)
 ```
 
@@ -346,35 +345,35 @@ The `name:`, `age:`, and `city:` labels are visual hints only. They are not part
 
 The extension provides semantic highlighting for different token categories:
 
-| Element | Semantic Type |
-| --- | --- |
-| `{}` `()` `[]` | keyword |
-| `@int`, `@str`, etc. | type |
-| field names | variable |
-| string values | string |
-| numbers | number |
-| comments | comment |
-| `:` `,` | operator |
-| `true` `false` | parameter |
+| Element              | Semantic Type |
+| -------------------- | ------------- |
+| `{}` `()` `[]`       | keyword       |
+| `@int`, `@str`, etc. | type          |
+| field names          | variable      |
+| string values        | string        |
+| numbers              | number        |
+| comments             | comment       |
+| `:` `,`              | operator      |
+| `true` `false`       | parameter     |
 
 ---
 
 ## 6. Configuration
 
-Search for `ason` in VS Code settings.
+Search for `asun` in VS Code settings.
 
-| Setting | Type | Default | Description |
-| --- | --- | --- | --- |
-| `ason.lspPath` | string | `""` | Path to the language server binary. If empty, the extension auto-detects it |
-| `ason.inlayHints.enabled` | boolean | `true` | Whether to show field-name inlay hints |
+| Setting                   | Type    | Default | Description                                                                 |
+| ------------------------- | ------- | ------- | --------------------------------------------------------------------------- |
+| `asun.lspPath`            | string  | `""`    | Path to the language server binary. If empty, the extension auto-detects it |
+| `asun.inlayHints.enabled` | boolean | `true`  | Whether to show field-name inlay hints                                      |
 
-### Set `ason.lspPath` manually
+### Set `asun.lspPath` manually
 
 If the server binary is not in a default location, set an absolute path in your VS Code settings:
 
 ```json
 {
-  "ason.lspPath": "/Users/your-name/code/lsp-ason/zig-out/bin/lsp-ason"
+  "asun.lspPath": "/Users/your-name/code/lsp-asun/zig-out/bin/lsp-asun"
 }
 ```
 
@@ -391,39 +390,39 @@ Try the following:
 1. Check whether the server binary exists:
 
    ```bash
-   ls -la ../lsp-ason/zig-out/bin/lsp-ason
+   ls -la ../lsp-asun/zig-out/bin/lsp-asun
    ```
 
 2. If it does not exist, build it again:
 
    ```bash
-   cd ../lsp-ason
+   cd ../lsp-asun
    zig build
    ```
 
-3. Open the VS Code Output panel and select `ASON Language Server`
-4. Set `ason.lspPath` manually if auto-detection does not find the binary
+3. Open the VS Code Output panel and select `ASUN Language Server`
+4. Set `asun.lspPath` manually if auto-detection does not find the binary
 
-### Q: I see "ASON LSP binary not found"
+### Q: I see "ASUN LSP binary not found"
 
-The extension could not find `lsp-ason` or the fallback `ason-lsp`.
+The extension could not find `lsp-asun` or the fallback `asun-lsp`.
 
 Fixes:
 
-- build `lsp-ason` with `zig build`
-- set `ason.lspPath` manually
+- build `lsp-asun` with `zig build`
+- set `asun.lspPath` manually
 - place the server binary somewhere in your `PATH`
 
 ### Q: The format shortcut does nothing
 
-Another formatter may be configured as the default formatter for ASON files.
+Another formatter may be configured as the default formatter for ASUN files.
 
 Add this to your VS Code settings:
 
 ```json
 {
-  "[ason]": {
-    "editor.defaultFormatter": "ason.ason-vscode"
+  "[asun]": {
+    "editor.defaultFormatter": "asun.asun-vscode"
   }
 }
 ```
@@ -441,7 +440,7 @@ Make sure inlay hints are enabled globally in VS Code:
 ### Q: How do I uninstall the extension?
 
 ```bash
-code --uninstall-extension ason.ason-vscode
+code --uninstall-extension asun.asun-vscode
 ```
 
 You can also remove it from the Extensions view in VS Code.
@@ -450,11 +449,11 @@ You can also remove it from the Extensions view in VS Code.
 
 ## Quick Reference
 
-| Feature | Action |
-| --- | --- |
-| Format | `Shift+Option+F` or `ASON: Format` |
-| Compress | `ASON: Compress` |
-| ASON to JSON | `ASON: Convert to JSON` |
-| JSON to ASON | `ASON: Convert JSON to ASON` |
-| Completion | `Ctrl+Space` |
+| Feature         | Action                                                    |
+| --------------- | --------------------------------------------------------- |
+| Format          | `Shift+Option+F` or `ASUN: Format`                        |
+| Compress        | `ASUN: Compress`                                          |
+| ASUN to JSON    | `ASUN: Convert to JSON`                                   |
+| JSON to ASUN    | `ASUN: Convert JSON to ASUN`                              |
+| Completion      | `Ctrl+Space`                                              |
 | Command Palette | `Cmd+Shift+P` on macOS or `Ctrl+Shift+P` on Windows/Linux |

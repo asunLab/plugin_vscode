@@ -1,0 +1,230 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "ASUN",
+  "scopeName": "source.asun",
+  "patterns": [
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#schema"
+    },
+    {
+      "include": "#data"
+    },
+    {
+      "include": "#array"
+    },
+    {
+      "include": "#string"
+    },
+    {
+      "include": "#number"
+    },
+    {
+      "include": "#boolean"
+    },
+    {
+      "include": "#operators"
+    }
+  ],
+  "repository": {
+    "comment": {
+      "name": "comment.block.asun",
+      "begin": "/\\*",
+      "end": "\\*/"
+    },
+    "schema": {
+      "patterns": [
+        {
+          "name": "meta.schema.asun",
+          "begin": "\\{",
+          "end": "\\}",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.schema.begin.asun"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.schema.end.asun"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#schema"
+            },
+            {
+              "include": "#quoted-field-name"
+            },
+            {
+              "include": "#type-hint"
+            },
+            {
+              "include": "#field-name"
+            },
+            {
+              "include": "#operators"
+            }
+          ]
+        }
+      ]
+    },
+    "quoted-field-name": {
+      "name": "variable.other.field.asun",
+      "match": "\"(?:\\\\.|[^\"\\\\])*\"(?=\\s*(?:[@,}]|/\\*|$))"
+    },
+    "field-name": {
+      "name": "variable.other.field.asun",
+      "match": "[a-zA-Z0-9_][a-zA-Z0-9_+\\-]*(?=\\s*(?:[@,}]|/\\*|$))"
+    },
+    "type-hint": {
+      "name": "support.type.asun",
+      "match": "\\b(int|float|str|bool)\\b"
+    },
+    "data": {
+      "patterns": [
+        {
+          "name": "meta.tuple.asun",
+          "begin": "\\(",
+          "end": "\\)",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.tuple.begin.asun"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.tuple.end.asun"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#data"
+            },
+            {
+              "include": "#array"
+            },
+            {
+              "include": "#string"
+            },
+            {
+              "include": "#number"
+            },
+            {
+              "include": "#boolean"
+            },
+            {
+              "include": "#operators"
+            },
+            {
+              "include": "#plain-string"
+            }
+          ]
+        }
+      ]
+    },
+    "array": {
+      "patterns": [
+        {
+          "name": "meta.array.asun",
+          "begin": "\\[",
+          "end": "\\]",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.array.begin.asun"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.array.end.asun"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#schema"
+            },
+            {
+              "include": "#data"
+            },
+            {
+              "include": "#array"
+            },
+            {
+              "include": "#string"
+            },
+            {
+              "include": "#number"
+            },
+            {
+              "include": "#boolean"
+            },
+            {
+              "include": "#operators"
+            },
+            {
+              "include": "#quoted-field-name"
+            },
+            {
+              "include": "#type-hint"
+            },
+            {
+              "include": "#field-name"
+            },
+            {
+              "include": "#plain-string"
+            }
+          ]
+        }
+      ]
+    },
+    "string": {
+      "name": "string.quoted.double.asun",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.asun",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "number": {
+      "name": "constant.numeric.asun",
+      "match": "-?\\b[0-9]+(\\.[0-9]+)?\\b"
+    },
+    "boolean": {
+      "name": "constant.language.boolean.asun",
+      "match": "\\b(true|false)\\b"
+    },
+    "plain-string": {
+      "name": "string.unquoted.asun",
+      "match": "[a-zA-Z_][a-zA-Z0-9_.@#$%&*!?~+-]*"
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "punctuation.separator.at.asun",
+          "match": "@"
+        },
+        {
+          "name": "punctuation.separator.colon.asun",
+          "match": ":"
+        },
+        {
+          "name": "punctuation.separator.comma.asun",
+          "match": ","
+        }
+      ]
+    }
+  }
+}

@@ -1,25 +1,25 @@
 {
   "icon": "images/logo.png",
-  "name": "ason-vscode",
-  "displayName": "ASON Support",
-  "description": "Language support for ASON (Array-Schema Object Notation) format — syntax highlighting, formatting, compression, error diagnostics, and field hints",
+  "name": "asun-vscode",
+  "displayName": "ASUN Support",
+  "description": "Language support for ASUN (Array-Schema Unified Notation) format — syntax highlighting, formatting, compression, error diagnostics, and field hints",
   "version": "0.1.0",
   "license": "MIT",
   "publisher": "Athan",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ason-lab/plugin_vscode.git",
+    "url": "https://github.com/asun-lab/plugin_vscode.git",
     "directory": "plugin_vscode"
   },
-  "homepage": "https://github.com/ason-lab/plugin_vscode#readme",
+  "homepage": "https://github.com/asun-lab/plugin_vscode#readme",
   "bugs": {
-    "url": "https://github.com/ason-lab/plugin_vscode/issues"
+    "url": "https://github.com/asun-lab/plugin_vscode/issues"
   },
   "engines": {
     "vscode": "^1.75.0"
   },
   "activationEvents": [
-    "onLanguage:ason"
+    "onLanguage:asun"
   ],
   "categories": [
     "Programming Languages",
@@ -27,7 +27,7 @@
     "Linters"
   ],
   "keywords": [
-    "ason",
+    "asun",
     "schema",
     "serialization",
     "formatter",
@@ -37,88 +37,88 @@
   "contributes": {
     "languages": [
       {
-        "id": "ason",
+        "id": "asun",
         "aliases": [
-          "ASON",
-          "ason"
+          "ASUN",
+          "asun"
         ],
         "extensions": [
-          ".ason"
+          ".asun"
         ],
         "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
       {
-        "language": "ason",
-        "scopeName": "source.ason",
-        "path": "./syntaxes/ason.tmLanguage.json"
+        "language": "asun",
+        "scopeName": "source.asun",
+        "path": "./syntaxes/asun.tmLanguage.json"
       },
       {
-        "scopeName": "markdown.ason.codeblock",
-        "path": "./syntaxes/ason.markdown.tmLanguage.json",
+        "scopeName": "markdown.asun.codeblock",
+        "path": "./syntaxes/asun.markdown.tmLanguage.json",
         "injectTo": [
           "text.html.markdown"
         ],
         "embeddedLanguages": {
-          "meta.embedded.block.ason": "ason"
+          "meta.embedded.block.asun": "asun"
         }
       }
     ],
     "commands": [
       {
-        "command": "ason.format",
-        "title": "ASON: Format (Beautify)",
-        "enablement": "resourceLangId == ason"
+        "command": "asun.format",
+        "title": "ASUN: Format (Beautify)",
+        "enablement": "resourceLangId == asun"
       },
       {
-        "command": "ason.compress",
-        "title": "ASON: Compress (Minify)",
-        "enablement": "resourceLangId == ason"
+        "command": "asun.compress",
+        "title": "ASUN: Compress (Minify)",
+        "enablement": "resourceLangId == asun"
       },
       {
-        "command": "ason.toJSON",
-        "title": "ASON: Convert to JSON",
-        "enablement": "resourceLangId == ason"
+        "command": "asun.toJSON",
+        "title": "ASUN: Convert to JSON",
+        "enablement": "resourceLangId == asun"
       },
       {
-        "command": "ason.fromJSON",
-        "title": "ASON: Convert JSON to ASON"
+        "command": "asun.fromJSON",
+        "title": "ASUN: Convert JSON to ASUN"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "command": "ason.format",
-          "when": "resourceLangId == ason",
+          "command": "asun.format",
+          "when": "resourceLangId == asun",
           "group": "1_modification@1"
         },
         {
-          "command": "ason.compress",
-          "when": "resourceLangId == ason",
+          "command": "asun.compress",
+          "when": "resourceLangId == asun",
           "group": "1_modification@2"
         },
         {
-          "command": "ason.toJSON",
-          "when": "resourceLangId == ason",
+          "command": "asun.toJSON",
+          "when": "resourceLangId == asun",
           "group": "1_modification@3"
         },
         {
-          "command": "ason.fromJSON",
+          "command": "asun.fromJSON",
           "when": "resourceLangId == json",
           "group": "1_modification@1"
         }
       ]
     },
     "configuration": {
-      "title": "ASON",
+      "title": "ASUN",
       "properties": {
-        "ason.lspPath": {
+        "asun.lspPath": {
           "type": "string",
           "default": "",
-          "description": "Path to the lsp-ason binary. If empty, uses bundled or PATH."
+          "description": "Path to the lsp-asun binary. If empty, uses bundled or PATH."
         },
-        "ason.inlayHints.enabled": {
+        "asun.inlayHints.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Show field name hints in data tuples."
@@ -128,7 +128,7 @@
   },
   "markdown": {
     "previewScripts": [
-      "./preview/ason-preview.js"
+      "./preview/asun-preview.js"
     ]
   },
   "scripts": {
@@ -136,8 +136,8 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts",
-    "build-lsp": "cd ../lsp-ason && zig build -Drelease=true && mkdir -p ../plugin_vscode/server && cp zig-out/bin/lsp-ason ../plugin_vscode/server/lsp-ason",
-    "deploy-lsp": "npm run build-lsp && cp server/lsp-ason \"$(node -e \"const p=require('path'),os=require('os'),f=require('fs');const ext=p.join(os.homedir(),'.vscode','extensions');const d=f.readdirSync(ext).find(x=>x.startsWith('ason.ason-vscode'));if(d){console.log(p.join(ext,d,'server','lsp-ason'))}\")\""
+    "build-lsp": "cd ../lsp-asun && zig build -Drelease=true && mkdir -p ../plugin_vscode/server && cp zig-out/bin/lsp-asun ../plugin_vscode/server/lsp-asun",
+    "deploy-lsp": "npm run build-lsp && cp server/lsp-asun \"$(node -e \"const p=require('path'),os=require('os'),f=require('fs');const ext=p.join(os.homedir(),'.vscode','extensions');const d=f.readdirSync(ext).find(x=>x.startsWith('asun.asun-vscode'));if(d){console.log(p.join(ext,d,'server','lsp-asun'))}\")\""
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"

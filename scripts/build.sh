@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ──────────────────────────────────────────────────────────────────────────────
-# ASON VS Code 插件 — 跨平台构建脚本
+# ASUN VS Code 插件 — 跨平台构建脚本
 #
 # Usage:
 #   ./scripts/build.sh              # Build all platforms
@@ -11,11 +11,11 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-LSP_DIR="$(cd "$PLUGIN_DIR/../lsp-ason" && pwd)"
+LSP_DIR="$(cd "$PLUGIN_DIR/../lsp-asun" && pwd)"
 SERVER_DIR="$PLUGIN_DIR/server"
 
 if [[ ! -d "$LSP_DIR" ]]; then
-    git clone --depth 1 https://github.com/ason-lab/lsp-ason.git "$LSP_DIR"
+    git clone --depth 1 https://github.com/asun-lab/lsp-asun.git "$LSP_DIR"
     if [[ ! -d "$LSP_DIR" ]]; then
         echo "Error: LSP directory not found at $LSP_DIR" >&2
         exit 1
@@ -59,14 +59,14 @@ detect_current_target() {
     echo "${os}-${arch}"
 }
 
-# ── compile lsp-ason ────────────────────────────────────────────────────────
+# ── compile lsp-asun ────────────────────────────────────────────────────────
 
 build_lsp() {
     local zig_target="$1" suffix="$2"
-    local output="$SERVER_DIR/lsp-ason${suffix}"
+    local output="$SERVER_DIR/lsp-asun${suffix}"
     local prefix="$LSP_DIR/zig-out-${zig_target}"
 
-    log "Compiling lsp-ason for ${zig_target} ..."
+    log "Compiling lsp-asun for ${zig_target} ..."
     mkdir -p "$SERVER_DIR"
 
     (
@@ -74,7 +74,7 @@ build_lsp() {
         zig build -Dtarget="${zig_target}" --release=small -p "$prefix"
     )
 
-    cp "$prefix/bin/lsp-ason${suffix}" "$output"
+    cp "$prefix/bin/lsp-asun${suffix}" "$output"
     rm -rf "$prefix"
 
     ok "Built: $output ($(du -h "$output" | awk '{print $1}'))"
@@ -117,7 +117,7 @@ main() {
 
     echo ""
     echo "╔═══════════════════════════════════════════════════╗"
-    echo "║    ASON VS Code Extension — Build Script          ║"
+    echo "║    ASUN VS Code Extension — Build Script          ║"
     echo "╚═══════════════════════════════════════════════════╝"
     echo ""
 
