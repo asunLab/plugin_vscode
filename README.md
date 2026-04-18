@@ -179,4 +179,4 @@ Marketplace-facing documentation is intentionally kept separate from build instr
 
 ## Repository
 
-[Source code](https://github.com/asun-lab/asun)
+[Source code](https://github.com/asunLab/asun)

@@ -15,7 +15,7 @@ LSP_DIR="$(cd "$PLUGIN_DIR/../lsp-asun" && pwd)"
 SERVER_DIR="$PLUGIN_DIR/server"
 
 if [[ ! -d "$LSP_DIR" ]]; then
-    git clone --depth 1 https://github.com/asun-lab/lsp-asun.git "$LSP_DIR"
+    git clone --depth 1 https://github.com/asunLab/lsp-asun.git "$LSP_DIR"
     if [[ ! -d "$LSP_DIR" ]]; then
         echo "Error: LSP directory not found at $LSP_DIR" >&2
         exit 1

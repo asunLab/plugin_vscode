@@ -8,12 +8,12 @@
   "publisher": "Athan",
   "repository": {
     "type": "git",
-    "url": "https://github.com/asun-lab/plugin_vscode.git",
+    "url": "https://github.com/asunLab/plugin_vscode.git",
     "directory": "plugin_vscode"
   },
-  "homepage": "https://github.com/asun-lab/plugin_vscode#readme",
+  "homepage": "https://github.com/asunLab/plugin_vscode#readme",
   "bugs": {
-    "url": "https://github.com/asun-lab/plugin_vscode/issues"
+    "url": "https://github.com/asunLab/plugin_vscode/issues"
   },
   "engines": {
     "vscode": "^1.75.0"
