@@ -79,16 +79,17 @@
         /[0-9]/.test(src[i]) ||
         (src[i] === "-" && i + 1 < src.length && /[0-9]/.test(src[i + 1]))
       ) {
-        var nm = src.slice(i).match(/^-?[0-9]+(\.[0-9]+)?/);
+        var nm = src.slice(i).match(/^-?(?:[0-9]+\.[0-9]+(?:[eE][+-]?[0-9]+)?|[0-9]+[eE][+-]?[0-9]+|[0-9]+)(?=$|[\s,\]\)])/);
         if (nm) {
           result += sp("num", nm[0]);
           i += nm[0].length;
           continue;
         }
       }
-      // Identifiers / keywords
-      if (/[a-zA-Z_]/.test(src[i])) {
-        var wm = src.slice(i).match(/^[a-zA-Z_][a-zA-Z0-9_+\-]*/);
+      // Plain strings / identifiers / keywords. Keep ASUN structural bytes out
+      // so comment openers and separators are not swallowed as string text.
+      if (isPlainStart(src[i])) {
+        var wm = src.slice(i).match(/^(?:\\(?:[\\",ntrbf(),\[\]{}:@]|u[0-9A-Fa-f]{4})|\/(?!\*)|[^\s,()[\]{}:@"\\\/])(?:\\(?:[\\",ntrbf(),\[\]{}:@]|u[0-9A-Fa-f]{4})|\/(?!\*)|[^,()[\]{}:@"\\\/])*/);
         if (wm) {
           var word = wm[0];
           var prev = i - 1;
@@ -129,6 +130,10 @@
 
   function sp(cls, content) {
     return '<span class="asun-' + cls + '">' + content + "</span>";
+  }
+
+  function isPlainStart(ch) {
+    return !!ch && !/[\s,()[\]{}:@"\\]/.test(ch);
   }
 
   function esc(s) {
