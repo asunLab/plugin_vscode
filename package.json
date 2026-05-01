@@ -3,7 +3,7 @@
   "name": "asun-vscode",
   "displayName": "ASUN Support",
   "description": "Language support for ASUN (Array-Schema Unified Notation) format — syntax highlighting, formatting, compression, error diagnostics, and field hints",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "publisher": "Athan",
   "repository": {
