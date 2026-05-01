@@ -86,6 +86,23 @@ export async function activate(context: ExtensionContext) {
     return;
   }
 
+  // Create the decoration type as early as possible during activation.
+  // VS Code orders sibling inline `after` decorations at the same position
+  // by decoration-type creation order; an earlier type tends to render
+  // closer to the code (i.e. before later types such as GitLens'
+  // current-line blame). Creating it before client.start() gives our
+  // hint the best chance of appearing ahead of other extensions.
+  if (!activeLineInfoDecoration) {
+    activeLineInfoDecoration = window.createTextEditorDecorationType({
+      after: {
+        margin: "0 0 0 1.5rem",
+        color: new ThemeColor("editorCodeLens.foreground"),
+      },
+      rangeBehavior: 1,
+    });
+    context.subscriptions.push(activeLineInfoDecoration);
+  }
+
   client = new LanguageClient(
     "asun-lsp",
     "ASUN Language Server",
@@ -95,14 +112,6 @@ export async function activate(context: ExtensionContext) {
 
   try {
     await client.start();
-    activeLineInfoDecoration = window.createTextEditorDecorationType({
-      after: {
-        margin: "0 0 0 1.5rem",
-        color: new ThemeColor("editorCodeLens.foreground"),
-      },
-      rangeBehavior: 1,
-    });
-    context.subscriptions.push(activeLineInfoDecoration);
     context.subscriptions.push(
       window.onDidChangeTextEditorSelection((e) => scheduleActiveLineInfoUpdate(e.textEditor)),
     );
@@ -356,7 +365,14 @@ async function updateActiveLineInfo(editor: TextEditor | undefined) {
     const info = await client.sendRequest("asun/cursorInfo", {
       textDocument: { uri: editor.document.uri.toString() },
       position: { line: active.line, character: active.character },
-    }) as { path?: string; type?: string } | null;
+    }) as {
+      path?: string;
+      type?: string;
+      line?: number;
+      character?: number;
+      endLine?: number;
+      endCharacter?: number;
+    } | null;
 
     if (seq !== activeLineInfoSeq) return;
     if (window.activeTextEditor !== editor) return;
@@ -366,10 +382,16 @@ async function updateActiveLineInfo(editor: TextEditor | undefined) {
       return;
     }
 
-    const line = editor.document.lineAt(active.line);
+    // Always anchor the hint at the end of the user's clicked line. This
+    // places it after any trailing punctuation/comments on that line
+    // (e.g. `Alice /*comments*/,`) instead of injecting the hint into
+    // the middle of the source text.
+    const hintLine = active.line;
+    const line = editor.document.lineAt(hintLine);
+    const hintCharacter = line.range.end.character;
     const range = new Range(
-      new Position(active.line, line.range.end.character),
-      new Position(active.line, line.range.end.character),
+      new Position(hintLine, hintCharacter),
+      new Position(hintLine, hintCharacter),
     );
     const decoration: DecorationOptions = {
       range,

@@ -57,7 +57,7 @@ The build script does the following:
 npm install -g @vscode/vsce
 ```
 
-### 2.2 Build for the current platform
+### 2.2 Build, install, and reload for the current platform
 
 ```bash
 cd plugin_vscode
@@ -65,11 +65,13 @@ npm install
 ./scripts/build.sh current
 ```
 
-This produces a `.vsix` file in the current directory, for example:
+This produces a `.vsix` file in the current directory, installs it into VS Code with `code --install-extension --force`, and requests a VS Code window reload. For example:
 
 ```text
 asun-vscode-darwin-arm64-0.1.0.vsix
 ```
+
+Builds without the `current` argument only produce VSIX files and do not install or reload VS Code.
 
 ### 2.3 Build for all supported platforms
 

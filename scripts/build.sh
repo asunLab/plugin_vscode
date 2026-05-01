@@ -4,7 +4,7 @@
 #
 # Usage:
 #   ./scripts/build.sh              # Build all platforms
-#   ./scripts/build.sh current      # Build current platform only
+#   ./scripts/build.sh current      # Build current platform only, install into VS Code, and reload
 #   ./scripts/build.sh darwin-arm64  # Build specified platform
 # ──────────────────────────────────────────────────────────────────────────────
 set -euo pipefail
@@ -13,6 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 LSP_DIR="$(cd "$PLUGIN_DIR/../lsp-asun" && pwd)"
 SERVER_DIR="$PLUGIN_DIR/server"
+CODE_BIN="${CODE_BIN:-code}"
 
 if [[ ! -d "$LSP_DIR" ]]; then
     git clone --depth 1 https://github.com/asunLab/lsp-asun.git "$LSP_DIR"
@@ -93,6 +94,40 @@ package_vsix() {
     ok "Packaged: ${target}"
 }
 
+find_latest_vsix() {
+    local latest="" file
+    for file in "$PLUGIN_DIR"/*.vsix; do
+        [[ -e "$file" ]] || continue
+        if [[ -z "$latest" || "$file" -nt "$latest" ]]; then
+            latest="$file"
+        fi
+    done
+    echo "$latest"
+}
+
+install_current_vsix() {
+    local vsix="$1"
+
+    if [[ -z "$vsix" || ! -f "$vsix" ]]; then
+        err "No VSIX package found to install."
+        exit 1
+    fi
+
+    if ! command -v "$CODE_BIN" >/dev/null 2>&1; then
+        err "VS Code CLI not found: $CODE_BIN"
+        err "Install the 'code' command in PATH or set CODE_BIN=/path/to/code."
+        exit 1
+    fi
+
+    log "Installing VSIX into VS Code: $(basename "$vsix")"
+    "$CODE_BIN" --install-extension "$vsix" --force
+    ok "Installed into VS Code."
+
+    log "Please reload VS Code to activate the new extension. "
+    log ""
+    log "------------------> Press Ctrl+Shift+P and select 'Reload Window' <-----------------"
+}
+
 # ── compile TypeScript ──────────────────────────────────────────────────────────
 
 compile_ts() {
@@ -124,9 +159,12 @@ main() {
     # Compile TypeScript (only once)
     compile_ts
 
+    rm -f "$PLUGIN_DIR"/*.vsix 2>/dev/null
+
     if [[ "$mode" == "current" ]]; then
         # Build for current platform only
         local current
+        local current_vsix
         current="$(detect_current_target)"
         log "Building for current platform: ${current}"
 
@@ -136,6 +174,8 @@ main() {
                 clean_server
                 build_lsp "$zig_target" "$suffix"
                 package_vsix "$target"
+                current_vsix="$(find_latest_vsix)"
+                install_current_vsix "$current_vsix"
                 built=1
                 break
             fi

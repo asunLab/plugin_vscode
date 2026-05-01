@@ -57,7 +57,7 @@ git --version
 npm install -g @vscode/vsce
 ```
 
-### 2.2 一键构建当前平台
+### 2.2 一键构建、安装并重载当前平台
 
 ```bash
 cd plugin_vscode
@@ -65,11 +65,13 @@ npm install
 ./scripts/build.sh current
 ```
 
-构建完成后会在当前目录生成一个 `.vsix` 文件，例如：
+构建完成后会在当前目录生成一个 `.vsix` 文件，通过 `code --install-extension --force` 安装到 VS Code，并请求重载 VS Code 窗口。例如：
 
 ```text
 asun-vscode-darwin-arm64-0.1.0.vsix
 ```
+
+不带 `current` 参数的构建只生成 VSIX 文件，不会自动安装或重载 VS Code。
 
 ### 2.3 构建所有支持的平台
 
